@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بەرنامەی جیم</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#15171b;--card:#1f2228;--line:#2e323a;--tx:#ecebe6;--mute:#9a9ea8;--ac:#ff7a29;--onac:#15171b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f3ef;--card:#fff;--line:#dcdad2;--tx:#1d1f23;--mute:#666b75;--ac:#e5600f;--onac:#fff}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Vazirmatn',Tahoma,system-ui,sans-serif;line-height:1.7}
+main{max-width:640px;margin:0 auto;padding:16px 14px 40px}
+h1{font-size:1.5rem;font-weight:800;margin:8px 0 14px}
+.tabs{display:flex;gap:8px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:8px 0;z-index:5}
+.tabs button{flex:1;font:inherit;font-weight:600;padding:12px 4px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--tx);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ac);border-color:var(--ac);color:var(--onac)}
+.tabs button:focus-visible,.open:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.sub{color:var(--mute);margin:6px 0 14px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.vid{aspect-ratio:16/9;background:#000}
+.vid.tall{aspect-ratio:9/16;max-height:80vh;margin:0 auto}
+.vid iframe{width:100%;height:100%;border:0;display:block}
+.none{display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:.9rem}
+.info{padding:12px 14px}
+.n{font-weight:800;font-size:1.1rem}
+.names{color:var(--mute);font-size:.9rem;margin-top:2px}
+.sets{display:inline-block;margin-top:8px;padding:4px 12px;border-radius:8px;background:var(--ac);color:var(--onac);font-weight:800;direction:ltr}
+.open{display:inline-block;margin-inline-start:10px;color:var(--ac);font-size:.9rem}
+.note{border:1px dashed var(--line);border-radius:12px;padding:12px 14px;margin-top:6px;color:var(--mute)}
+.empty{text-align:center;padding:40px 10px;color:var(--mute)}
+</style>
+</head>
+<body>
+<main>
+<h1>بەرنامەی تەمرین</h1>
+<div class="tabs" role="tablist" id="tabs"></div>
+<div id="view"></div>
+</main>
+<script>
+// بۆ زیادکردنی ڤیدیۆ: لینکی Drive دابنێ لە شوێنی link
+var DAYS=[
+{title:"سنگ و سێ‌سەر",notes:["١٠ خولەک گەرمکردنەوە پێش یاری","١٠ خولەک کارداین دوای یاری"],ex:[
+{ku:"پرێسی سەرەوە",ar:"ضغط علوي",en:"Incline Press",sets:"12-10-8",link:"https://drive.google.com/file/d/1roiEVJDgGFVHpQH2Gr7PPQnMTOoTxHW4/view?usp=drive_link"},
+{ku:"پرێسی سنگ بە ئامێر",ar:"ضغط الصدر بالجهاز",en:"Machine Chest Press",sets:"12-10-8",link:"https://drive.google.com/file/d/1riv0reLgPoetp4PJ2mEexE28WO6-3SHP/view?usp=drive_link"},
+{ku:"دیپس",ar:"متوازي",en:"Dips",sets:"3 × 12",link:""},
+{ku:"پرێسی خوارەوە",ar:"ضغط سفلي",en:"Decline Press",sets:"12-10-8",link:""},
+{ku:"سێ‌سەر بە دەمبڵ",ar:"ترايسبس دمبل",en:"Triceps Dumbbell",sets:"3 × 12",link:""},
+{ku:"سێ‌سەر پووش‌داون",ar:"ترايسبس بوش داون",en:"Triceps Pushdown",sets:"3 × 12",link:""},
+{ku:"سێ‌سەر بە کەیبڵ",ar:"ترايسبس كيبل",en:"Triceps Cable",sets:"3 × 12",link:""},
+{ku:"پلانک",ar:"بلانك",en:"Plank",sets:"3 × 12",link:"https://youtube.com/shorts/1vysvmaLWkg?feature=share"}
+]},
+{title:"",notes:[],ex:[]},
+{title:"",notes:[],ex:[]}
+];
+var K=["١","٢","٣"],tabs=document.getElementById("tabs"),view=document.getElementById("view");
+function yid(u){var m=u.match(/(?:shorts\/|youtu\.be\/|v=)([\w-]{11})/);return m?m[1]:null}
+function fid(u){var m=u.match(/\/d\/([^\/?]+)/);return m?m[1]:null}
+function show(i){
+  [].forEach.call(tabs.children,function(b,j){b.setAttribute("aria-selected",j===i)});
+  var d=DAYS[i],h="";
+  if(!d.ex.length){view.innerHTML='<div class="empty">ڕۆژی '+K[i]+' هێشتا زیاد نەکراوە.<br>وێنەی بەرنامەکە و لینکی ڤیدیۆکان بنێرە.</div>';return}
+  h+='<p class="sub">'+d.title+' · '+d.ex.length+' هەڵسوکەوت</p>';
+  d.ex.forEach(function(e,k){
+    var y=e.link&&yid(e.link),id=y||(e.link&&fid(e.link)),v;
+    if(y){v='<iframe src="https://www.youtube.com/embed/'+y+'?playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy" title="'+e.en+'"></iframe>'}
+    else if(id){v='<iframe src="https://drive.google.com/file/d/'+id+'/preview" allow="autoplay" allowfullscreen loading="lazy" title="'+e.en+'"></iframe>'}
+    else v='<div class="none">ڤیدیۆ هێشتا زیاد نەکراوە</div>';
+    h+='<section class="ex"><div class="vid'+(y?' tall':'')+'">'+v+'</div><div class="info"><div class="n">'+K[0].replace("١",String(k+1).replace(/\d/g,function(x){return "٠١٢٣٤٥٦٧٨٩"[x]}))+'. '+e.ku+'</div><div class="names">'+e.ar+' | '+e.en+'</div><span class="sets">'+e.sets+'</span>'+(id?'<a class="open" href="'+e.link+'" target="_blank" rel="noopener">کردنەوە لە سەرچاوە</a>':'')+'</div></section>';
+  });
+  d.notes.forEach(function(t){h+='<div class="note">'+t+'</div>'});
+  view.innerHTML=h;window.scrollTo(0,0);
+}
+DAYS.forEach(function(d,i){var b=document.createElement("button");b.setAttribute("role","tab");b.textContent="ڕۆژی "+K[i];b.onclick=function(){show(i)};tabs.appendChild(b)});
+show(0);
+</script>
+</body>
+</html>
